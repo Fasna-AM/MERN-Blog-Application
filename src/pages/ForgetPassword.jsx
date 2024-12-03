@@ -19,12 +19,12 @@ const ForgetPassword = () => {
         if(email){
             try{
                 const result = await forgetpasswordAPI({email})
-                // console.log(result);
+                console.log(result);
                 
                 if(result.status==200){
                     alert("Password reset link send succeesfully on your gmail account")
                 }else{
-                    alert(result.response)
+                    alert("Author not found please register")
                 }
 
             }catch(err){
