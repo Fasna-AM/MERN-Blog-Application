@@ -98,5 +98,15 @@ export const changePwdAPI = async(id,currentpwd,newpwd,reqHeader)=>{
 
 //homeBlogs
 export const homeblogAPI = async()=>{
-    return await commonAPI("get",`${SERVER_URL}/homeblog`,{},{})
+    return await commonAPI("GET",`${SERVER_URL}/homeblog`,{},{})
+}
+
+//forget-password
+export const forgetpasswordAPI= async(reqbody)=>{
+    return await commonAPI("POST",`${SERVER_URL}/forget-password`,reqbody)
+}
+
+//reset-password
+export const resetPasswordAPI = async(token,reqbody)=>{
+    return await commonAPI("POST",`${SERVER_URL}/reset-password/${token}`,reqbody)
 }

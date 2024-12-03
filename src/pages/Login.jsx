@@ -57,8 +57,6 @@ const Login = () => {
     <div className='bg-white rounded-5 py-5 px-3 shadow'style={{width:"500px"}} >
       <h4>Sign In to your Account</h4>
       <div className='d-flex flex-column gap-4 justify-content-center align-items-center mt-5 px-3'>
-       
-          
           <FloatingLabel
             controlId="floatingInputEmail"
             label="Email Address"
@@ -73,11 +71,12 @@ const Login = () => {
           >
             <Form.Control type="password" placeholder="Password" onChange={(e)=>setLogindetails({...logindetails,password:e.target.value})}/>
           </FloatingLabel>
-        
       </div>
       <div className="mt-3 text-center">
         <button onClick={handleLogin}  className="btn btn-dark mb-3">Login</button>
         <p>New User ? Please Click here to <Link to={'/register'}>Register</Link></p>
+        <Link to={"/forgot-password"}>Forgot Password</Link>
+
       </div>
     </div>
   </div>

@@ -12,6 +12,8 @@ import { useContext,useEffect, useState } from 'react'
 import { tokenAuthContext } from './context/AuthContextAPI'
 import Pnf from './pages/Pnf'
 import Favorites from './pages/Favorites'
+import ForgetPassword from './pages/ForgetPassword'
+import ResetPassword from './pages/ResetPassword'
 
 function App() {
 
@@ -32,6 +34,10 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/forgot-password' element={<ForgetPassword />} />
+        <Route path='/reset-password/:token' element={<ResetPassword />} />
+
+
         {
           isAutherised &&
           <>
