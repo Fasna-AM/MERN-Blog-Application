@@ -1,16 +1,42 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 
 import HomeImg from '../assets/Home.jpg'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import BlogCard from '../components/BlogCard'
-import { Card } from 'react-bootstrap'
-
+import { Card, Col, Modal, Row } from 'react-bootstrap'
+import { tokenAuthContext } from '../context/AuthContextAPI'
+import SERVER_URL from '../services/ServerUrl'
+import { homeblogAPI } from '../services/allAPIs'
 
 
 const Home = () => {
+  const { isAutherised, setIsAutherised } = useContext(tokenAuthContext)
+  const [show, setShow] = useState(false);
+  const [blogDetails, setBlogDetails] = useState([])
+  const [modalBlog,setModalBlog] = useState({})
+  const navigate = useNavigate()
 
+
+  useEffect(() => {
+    fechBlogs()
+  }, [])
+
+  const fechBlogs = async () => {
+    try {
+      const result = await homeblogAPI()
+      // console.log(result);
+
+      if (result.status == 200) {
+        setBlogDetails(result.data)
+      }
+
+    } catch (err) {
+      console.log(err);
+
+    }
+  }
 
   const mystyle = {
     backgroundImage: `url(${HomeImg})`,
@@ -21,6 +47,21 @@ const Home = () => {
 
 
   }
+  const handleClose = () => setShow(false);
+  const handleShow = (blog) => {
+    setShow(true);
+    setModalBlog(blog)
+  }
+
+  const handleBlog = () => {
+    if (sessionStorage.getItem("token")) {
+
+      navigate('/blogs')
+
+    } else {
+      alert("Please login to get full access to our blogs ")
+    }
+  }
 
   return (
     <>
@@ -28,23 +69,36 @@ const Home = () => {
       <h1 className='w-100 text-center position-absolute ' style={{ fontSize: "120px", fontFamily: "'Courier New', Courier, monospace", marginTop: "-20px" }}>BLOG</h1>
       <div className='d-flex justify-content-center align-items-center row container-fluid' style={mystyle}>
         <div className='col-lg-4 mt-5 '>
-        <p className='text-white '  style={{ textAlign: "justify",fontSize:"20px" }}>
-          One St0p Destination for all Blogs. Where User can add and manage their blogs. As well as access all blogs available in our website... What are you waiting for!!!
-        </p>
-        <Link to={'/login'} className='btn btn-dark text-white mt-3 py-2 fw-bolder'>STARTS TO EXPLORE</Link>
+          <p className='text-white ' style={{ textAlign: "justify", fontSize: "20px" }}>
+            One St0p Destination for all Blogs. Where User can add and manage their blogs. As well as access all blogs available in our website... What are you waiting for!!!
+          </p>
+          {
+            isAutherised ?
+              <Link to={'/blogs'} className='btn btn-dark text-white mt-3 py-2 fw-bolder'>EXPLORE  BLOGS</Link>
+              :
+              <Link to={'/login'} className='btn btn-dark text-white mt-3 py-2 fw-bolder'>STARTS TO EXPLORE</Link>
+
+          }
         </div>
         <div className='col-lg-6'></div>
-        </div>
-        <div className="mt-5 text-center">
+      </div>
+      <div className="mt-5 text-center">
         <h1 className="mb-5">Explore Our Blogs</h1>
         <marquee >
-          <div className="d-flex me-2">
+              <div className="d-flex ">
+              {
+            blogDetails?.map((blog,index) => (
+              <div key={index} className="me-5">
+                  <img width={"400rem"} height={"200rem"} style={{ cursor: "pointer" }} onClick={()=>handleShow(blog)} src={`${SERVER_URL}/uploads/${blog?.blogImg}`}  alt="" />
+
+              </div>
+              ))
+
+            }
+              </div>
            
-                <BlogCard />
-             
-          </div>
         </marquee>
-        <button className='btn btn-link mt-5'>Click Here To View More Blogs....</button>
+        <button onClick={handleBlog} className='btn btn-link mt-5'>Click Here To View More Blogs....</button>
       </div>
       <div className="d-flex justify-content-center align-items-center my-5 flex-column">
         <h1>Our Testimonials</h1>
@@ -106,8 +160,27 @@ const Home = () => {
           </Card>
         </div>
       </div>
-     
+
       <Footer />
+      <Modal size='lg' centered show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>{modalBlog?.tiltle}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Row>
+            <Col className='d-flex justify-content-center align-items-center' >
+              <img className='img-fluid shadow' src={`${SERVER_URL}/uploads/${modalBlog?.blogImg}`} alt="" width={"400px"} />
+            </Col>
+            <Col lg={7} style={{ textAlign: "justify" }}>
+              <p>{modalBlog?.subhead}</p>
+              <p>{modalBlog?.description}</p>
+              <h6 className='px-3 border rounded-5 bg-secondary py-1 text-black w-25 '>{modalBlog ?.category}</h6>
+
+            </Col>
+          </Row>
+        </Modal.Body>
+
+      </Modal>
     </>
   )
 }
